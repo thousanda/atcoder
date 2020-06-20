@@ -1,6 +1,6 @@
-# Atcoder精進記録
+# AtCoder精進記録
 
-Atcoderプロフィール:  
+AtCoderプロフィール:  
 https://atcoder.jp/users/Thousanda
 
 
@@ -17,3 +17,16 @@ https://atcoder.jp/users/Thousanda
 以下のディレクトリには、よく使うデータ構造やアルゴリズムが .py 形式で置いてあります。
 
 - templates/
+
+
+
+## Links
+- AtCoder
+  - https://atcoder.jp/
+- AtCoder Problems
+  - https://kenkoooo.com/atcoder#/table/
+- Python で AtCoder を遊ぶときに知ってると便利かもしれないこと
+  - https://nagiss.hateblo.jp/entry/2019/03/12/012944
+- 計算量のはなし
+  - https://cppx.hatenablog.com/entry/2017/08/06/104144
+
