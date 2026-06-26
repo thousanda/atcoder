@@ -1,0 +1,64 @@
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LANG=C.UTF-8
+ENV TERM=xterm-256color
+
+# C++ toolchain + development tools
+# Note: Neovim is installed from the official release below, not apt.
+# Ubuntu's apt ships an old (0.9) Neovim that nvim-lspconfig no longer supports.
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    g++ \
+    gdb \
+    clangd \
+    python3 \
+    python3-pip \
+    python3-venv \
+    nodejs \
+    npm \
+    git \
+    curl \
+    unzip \
+    ripgrep \
+    fd-find \
+    && rm -rf /var/lib/apt/lists/*
+
+# Neovim (official release, 0.11+ required by nvim-lspconfig)
+ARG NVIM_VERSION=v0.12.3
+RUN ARCH="$(uname -m)" \
+    && case "$ARCH" in \
+         x86_64)        NVIM_ARCH=x86_64 ;; \
+         aarch64|arm64) NVIM_ARCH=arm64 ;; \
+         *) echo "unsupported arch: $ARCH" >&2; exit 1 ;; \
+       esac \
+    && curl -fL "https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux-${NVIM_ARCH}.tar.gz" \
+         -o /tmp/nvim.tar.gz \
+    && tar -C /opt -xzf /tmp/nvim.tar.gz \
+    && ln -s "/opt/nvim-linux-${NVIM_ARCH}/bin/nvim" /usr/local/bin/nvim \
+    && rm /tmp/nvim.tar.gz
+
+# online-judge-tools
+RUN pip3 install --break-system-packages online-judge-tools
+
+# atcoder-cli
+RUN npm install -g atcoder-cli
+
+# Neovim config
+COPY config/nvim /root/.config/nvim
+
+# Install Neovim plugins at build time. This also compiles the treesitter
+# parsers via the config's `ensure_installed` (build-essential provides the C
+# compiler). Tolerate the cosmetic non-zero exit headless mode can return, but
+# fail the build if the plugins were not actually cloned.
+RUN nvim --headless "+Lazy! sync" "+qa!" || true \
+    && test -d /root/.local/share/nvim/lazy/nvim-lspconfig \
+    && test -d /root/.local/share/nvim/lazy/nvim-treesitter \
+    && test -d /root/.local/share/nvim/lazy/nvim-cmp
+
+# Shell config: aliases / editor env / competitive-programming helpers
+COPY shell/bashrc.sh /etc/atcoder-bashrc.sh
+RUN printf '\nsource /etc/atcoder-bashrc.sh\n' >> /root/.bashrc
+
+WORKDIR /work
+CMD ["bash"]

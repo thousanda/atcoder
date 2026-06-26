@@ -5,7 +5,8 @@ https://atcoder.jp/users/Thousanda
 
 ## Languages
 - Python `python/`
-- Haskell `haskell`
+- Haskell `haskell/`
+- C++ `cpp/`
 
 ## Links
 - AtCoder

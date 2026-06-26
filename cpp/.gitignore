@@ -1,0 +1,4 @@
+# Compiled binaries (cxx/ojt compile to ./<basename>, e.g. main.cpp -> main)
+main
+a.out
+*.o
